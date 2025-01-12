@@ -1,39 +1,20 @@
-FROM node:20-slim AS base
+FROM node:20-slim
 
-# 本番環境用の設定
-ENV NODE_ENV=production
+# 開発環境用の設定
+ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NPM_CONFIG_CACHE=/app/.npm
 
 WORKDIR /app
 
-# 依存関係のインストールステージ
-FROM base AS deps
-COPY package*.json ./
-RUN npm ci --only=production
+# 必要なディレクトリを作成し、権限を設定
+RUN mkdir -p /app/node_modules /app/.next /app/.npm && \
+    chown -R node:node /app && \
+    chmod 755 /app
 
-# ビルドステージ
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN npm run build
-
-# 実行ステージ
-FROM base AS runner
-
-# アプリケーションの実行に必要なユーザーを作成
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
-
-# アプリケーションファイルのコピー
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
+USER node
 
 EXPOSE 3000
+EXPOSE 9229
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-
-CMD ["node", "server.js"]
+CMD ["npm", "run", "dev"]

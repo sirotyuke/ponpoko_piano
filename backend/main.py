@@ -19,7 +19,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "こんばんわに"}
 
 @app.get("/health")
 async def health_check():

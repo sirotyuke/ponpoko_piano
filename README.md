@@ -28,7 +28,7 @@ node -v
 npm -v
 ```
 
-### 起動方法
+### 初回セットアップ手順
 
 1. リポジトリのクローン
 ```bash
@@ -36,7 +36,13 @@ git clone [repository-url]
 cd ponpoko_piano
 ```
 
-2. フロントエンドの初期化
+2. データベースボリュームの作成
+```bash
+# MySQLデータ用の永続ボリュームを作成
+docker volume create mysql_data
+```
+
+3. フロントエンドの初期化
 ```bash
 # Next.jsプロジェクトの作成
 cd frontend
@@ -55,21 +61,22 @@ npm install
 cd ..
 ```
 
-3. アプリケーションの起動
+4. アプリケーションの起動
 ```bash
-
 # キャッシュを完全にクリーン
 docker builder prune -f
 
 # 初回起動（ビルド込み）
-docker-compose up --build
-
-# バックグラウンドで起動する場合
 docker-compose up -d --build
 ```
 
-### 基本的なコマンド
+### 通常の起動方法
+```bash
+# アプリケーションの起動
+docker-compose up -d
+```
 
+### 基本的なコマンド
 ```bash
 # サービスの状態確認
 docker-compose ps
@@ -125,5 +132,23 @@ docker-compose logs -f
 - フロントエンドのビルドエラー → `docker-compose logs -f frontend` で詳細を確認
 - バックエンドの接続エラー → `docker-compose logs -f backend` で詳細を確認
 - データベース接続エラー → `docker-compose logs -f db` で詳細を確認
+
+### 開発時のコマンド
+
+#### コンテナの再起動（データベースを除く）
+```bash
+# フロントエンド/バックエンドの変更を適用する場合
+docker-compose down
+docker-compose up -d --build
+
+# データベースのデータを保持したまま再起動
+docker-compose down && docker-compose up -d
+```
+
+#### データベースを含めた完全なリセット
+```bash
+# 全てのコンテナとボリュームを削除（データベースも削除）
+docker-compose down -v
+```
 
 
