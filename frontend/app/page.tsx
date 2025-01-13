@@ -9,7 +9,7 @@ export default function Home() {
   useEffect(() => {
     const fetchMessage = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/`);
         if (!response.ok) {
           throw new Error('APIリクエストに失敗しました');
         }
