@@ -17,7 +17,8 @@ RUN mkdir -p /app/node_modules /app/.next /app/.npm && \
 COPY --chown=1000:1000 package*.json ./
 
 # 依存関係のインストール
-RUN npm install
+RUN npm install && \
+    npm install -g next
 
 # アプリケーションのファイルをコピー
 COPY --chown=1000:1000 . .
