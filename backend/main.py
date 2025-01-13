@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI(
     title="Ponpoko Piano API",
@@ -8,13 +9,20 @@ app = FastAPI(
     root_path="/api"
 )
 
+# 環境変数から許可するオリジンを取得
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost",
+    "https://sironeko-tech.com"
+]
+
 # CORSの設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Accept"],
 )
 
 @app.get("/")
