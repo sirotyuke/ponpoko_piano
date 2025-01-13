@@ -17,15 +17,6 @@ services:
       - backend
       - certbot-auto-renew
 
-  # 手動で証明書を取得するための Certbot サービス
-  certbot:
-    image: certbot/certbot
-    container_name: ponpoko-certbot
-    volumes:
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/logs:/var/log/letsencrypt
-
   # 自動更新用の Certbot サービス
   certbot-auto-renew:
     image: certbot/certbot
@@ -39,10 +30,11 @@ services:
     command: >
       -c "trap exit TERM;
           while :; do
-            certbot renew --webroot -w /var/www/certbot;
-            kill -HUP $$(docker ps -q -f name=ponpoko_piano-nginx-1);
+            certbot renew --webroot -w /var/www/certbot --quiet;
             sleep 12h;
           done;"
+    depends_on:
+      - nginx
 
   frontend:
     build:
