@@ -34,12 +34,13 @@ services:
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/logs:/var/log/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
     entrypoint: /bin/sh
     command: >
       -c "trap exit TERM;
           while :; do
             certbot renew --webroot -w /var/www/certbot;
-            docker exec ponpoko_piano-nginx-1 nginx -s reload;
+            kill -HUP $$(docker ps -q -f name=ponpoko_piano-nginx-1);
             sleep 12h;
           done;"
 
