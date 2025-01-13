@@ -55,23 +55,11 @@ services:
       - ./certbot/www:/var/www/certbot:rw
       - ./certbot/conf:/etc/letsencrypt:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    entrypoint: "/bin/sh -c"
-    command: >
-      'trap exit TERM; 
-      while :; do 
-        echo "[Certbot] Starting certificate renewal check at $(date)";
-        certbot renew --webroot -w /var/www/certbot;
-        if [ $? -eq 0 ]; then
-          echo "[Certbot] Certificate check completed successfully at $(date)";
-          docker kill -s HUP ponpoko_piano-nginx-1;
-        else
-          echo "[Certbot] Certificate renewal failed at $(date)";
-        fi;
-        echo "[Certbot] Sleeping for 24 hours...";
-        sleep 24h & wait $${!}; 
-      done;'
+    entrypoint: sh
+    command: -c 'while true; do echo "[Certbot] Starting renewal check at $$(date)"; certbot renew --webroot -w /var/www/certbot; sleep 24h; done'
     depends_on:
       - nginx
+    restart: always
 
 volumes:
   mysql_data:
