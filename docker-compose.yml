@@ -51,12 +51,25 @@ services:
 
   certbot-auto-renew:
     image: certbot/certbot
+    container_name: certbot-auto-renew
     volumes:
       - ./certbot/www:/var/www/certbot:rw
       - ./certbot/conf:/etc/letsencrypt:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    entrypoint: sh
-    command: -c 'while true; do echo "[Certbot] Starting renewal check at $$(date)"; certbot renew --webroot -w /var/www/certbot; sleep 24h; done'
+    entrypoint: "/bin/sh"
+    command: |
+      -c '
+      echo "[Certbot] Container started at `date`";
+      echo "[Certbot] Starting automatic renewal service...";
+      trap exit TERM;
+      while true; do
+        echo "[Certbot] Starting renewal check at `date`";
+        certbot renew --webroot -w /var/www/certbot --non-interactive --deploy-hook "nginx -s reload";
+        echo "[Certbot] Renewal check completed at `date`";
+        echo "[Certbot] Sleeping for 24 hours...";
+        sleep 86400;
+      done
+      '
     depends_on:
       - nginx
     restart: always
