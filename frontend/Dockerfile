@@ -26,6 +26,10 @@ COPY --chown=1000:1000 . .
 # 本番用ビルド
 RUN npm run build
 
+# スタンドアロンサーバーの準備
+RUN cp -r .next/static .next/standalone/app/.next/static && \
+    cp -r public .next/standalone/app/public
+
 # 開発環境用の権限設定
 # RUN chmod 644 package*.json && \
 #     chmod -R 755 node_modules .next .npm
@@ -40,4 +44,6 @@ EXPOSE 3000
 # CMD ["npm", "run", "dev"]
 
 # 本番環境用のコマンド
-CMD ["npm", "run", "start"]
+CMD ["node", ".next/standalone/server.js"]
+
+WORKDIR /app/.next/standalone/app
