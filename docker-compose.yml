@@ -57,6 +57,7 @@ services:
     #     target: /app/.npm
     environment:
       - NODE_ENV=production
+    command: node .next/standalone/server.js
     # 開発環境用のコマンド
     # command: >
     #   sh -c "
