@@ -23,6 +23,9 @@ RUN npm install && \
 # アプリケーションのファイルをコピー
 COPY --chown=1000:1000 . .
 
+# 本番用ビルド
+RUN npm run build
+
 # 開発環境用の権限設定
 # RUN chmod 644 package*.json && \
 #     chmod -R 755 node_modules .next .npm
