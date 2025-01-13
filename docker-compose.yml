@@ -50,13 +50,16 @@ services:
     restart: always
 
   certbot-auto-renew:
-    image: certbot/certbot
+    build:
+      context: ./certbot
+      dockerfile: Dockerfile
     volumes:
       - ./certbot/www:/var/www/certbot:rw
       - ./certbot/conf:/etc/letsencrypt:rw
-    command: renew --webroot -w /var/www/certbot --quiet
+      - ./certbot/logs:/var/log/certbot:rw
     depends_on:
       - nginx
+    restart: always
 
 volumes:
   mysql_data:
