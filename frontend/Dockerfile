@@ -9,8 +9,8 @@ WORKDIR /app
 
 # 必要なディレクトリを作成し、権限を設定
 RUN mkdir -p /app/node_modules /app/.next /app/.npm && \
-    chown -R node:node /app && \
-    chmod 755 /app
+    chown -R 1000:1000 /app && \
+    chmod -R 755 /app
 
 USER node
 
