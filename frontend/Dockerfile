@@ -12,6 +12,11 @@ RUN mkdir -p /app/node_modules /app/.next /app/.npm && \
     chown -R 1000:1000 /app && \
     chmod -R 755 /app
 
+# アプリケーションのファイルをコピーし、適切な権限を設定
+COPY --chown=1000:1000 . .
+RUN chmod 644 package*.json && \
+    chmod -R 755 node_modules .next .npm
+
 USER node
 
 EXPOSE 3000
