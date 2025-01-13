@@ -30,8 +30,6 @@ services:
             certbot renew --webroot -w /var/www/certbot --quiet;
             sleep 12h;
           done;"
-    depends_on:
-      - nginx
 
   frontend:
     build:
