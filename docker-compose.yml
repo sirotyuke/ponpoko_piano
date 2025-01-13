@@ -50,26 +50,25 @@ services:
     ports:
       - "9229:9229"
     volumes:
+      - type: bind
+        source: ./frontend
+        target: /app
+        consistency: cached
       - type: volume
         source: node_modules
         target: /app/node_modules
       - type: volume
         source: next_cache
         target: /app/.next
-      - type: bind
-        source: ./frontend
-        target: /app
-        consistency: cached
+      - type: volume
+        source: npm_cache
+        target: /app/.npm
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost/api
+      - NEXT_PUBLIC_API_URL=https://sironeko-tech.com/api
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
     command: >
       sh -c "
-        if [ ! -f package.json ]; then
-          echo 'Error: package.json not found'
-          exit 1
-        fi &&
         npm install &&
         npm run dev -- -p 3000 --hostname 0.0.0.0
       "
@@ -116,3 +115,4 @@ volumes:
     external: true
   node_modules:
   next_cache:
+  npm_cache:
